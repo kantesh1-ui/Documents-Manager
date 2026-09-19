@@ -1,0 +1,28 @@
+name: documents_manager
+description: Apne zaroori documents ek jagah, lock ke peeche.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  file_picker: ^8.1.6
+  path_provider: ^2.1.5
+  shared_preferences: ^2.3.3
+  crypto: ^3.0.6
+  encrypt: ^5.0.3
+  local_auth: ^2.3.0
+  open_filex: ^4.6.0
+  permission_handler: ^11.3.1
+  cunning_document_scanner: ^1.2.3
+  image_picker: ^1.1.2
+  pdf: ^3.11.1
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
