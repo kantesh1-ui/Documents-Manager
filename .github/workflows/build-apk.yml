@@ -1,0 +1,60 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Create Android project scaffold
+        run: flutter create --org com.docsmanager --project-name documents_manager --platforms android app
+
+      - name: Apply app source
+        run: |
+          cp app_src/pubspec.yaml app/pubspec.yaml
+          cp app_src/main.dart app/lib/main.dart
+          cp app_src/AndroidManifest.xml app/android/app/src/main/AndroidManifest.xml
+          find app/android -name "MainActivity.kt" -exec sed -i 's/FlutterActivity/FlutterFragmentActivity/g' {} +
+
+      - name: Build release APK
+        run: |
+          cd app
+          flutter pub get
+          flutter build apk --release
+
+      - name: Rename APK
+        run: cp app/build/app/outputs/flutter-apk/app-release.apk DocumentsManager.apk
+
+      - name: Upload as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: DocumentsManager-apk
+          path: DocumentsManager.apk
+
+      - name: Publish as release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Documents Manager - latest build
+          files: DocumentsManager.apk
